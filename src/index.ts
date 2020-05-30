@@ -1,7 +1,7 @@
 /*
  * @Author: miaoyu
  * @Date: 2020-05-28 20:01:21
- * @LastEditTime: 2020-05-30 16:48:15
+ * @LastEditTime: 2020-05-30 16:55:40
  * @LastEditors: miaoyu
  * @Description:
  */
@@ -19,7 +19,7 @@ canvas.height = window.innerHeight;
 
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-const data = createData(canvas.width, canvas.height, 30, 10);
+const data = createData(canvas.width, canvas.height, 20, 10);
 console.log(data);
 
 enum PARAMS {
@@ -30,7 +30,7 @@ enum PARAMS {
   /**
    * 库仑力系数
    */
-  coulomb = 10,
+  coulomb = 16,
   /**
    * 阻尼力系数
    */
@@ -42,7 +42,7 @@ enum PARAMS {
   /**
    * 弹簧长度
    */
-  springlength = 50,
+  springlength = 10,
 }
 
 function render() {
