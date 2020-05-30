@@ -1,24 +1,34 @@
+/*
+ * @Author: miaoyu
+ * @Date: 2020-05-28 20:01:21
+ * @LastEditTime: 2020-05-30 14:42:15
+ * @LastEditors: miaoyu
+ * @Description: 
+ */ 
 import * as vector from "./vector";
+import Ball from "./Ball"
 
 class Line {
-  ctx: CanvasRenderingContext2D;
+  id:string
   angle = 0;
   strokeStyle = "white";
-  ps = vector.create(0, 0);
   length = 200;
+  source: Ball;
+  target: Ball;
 
-  constructor(ctx: CanvasRenderingContext2D) {
-    this.ctx = ctx;
+  constructor(id: string, source: Ball, target: Ball) {
+    this.id = id;
+    this.source = source
+    this.target = target
   }
-  render() {
-    const ctx = this.ctx;
+  render(ctx: CanvasRenderingContext2D) {
 
     ctx.save();
-    ctx.translate(this.p[0], this.p[1]);
-    ctx.rotate(this.angle);
+    // ctx.translate(this.p[0], this.p[1]);
+    // ctx.rotate(this.angle);
     ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(this.length, 0);
+    ctx.moveTo(this.source.p[0], this.source.p[1]);
+    ctx.lineTo(this.target.p[0], this.target.p[1]);
     ctx.strokeStyle = this.strokeStyle;
     ctx.stroke();
     ctx.closePath();

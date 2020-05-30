@@ -1,11 +1,12 @@
 /*
  * @Author: miaoyu
  * @Date: 2020-05-28 20:01:21
- * @LastEditTime: 2020-05-30 14:04:41
+ * @LastEditTime: 2020-05-30 16:47:29
  * @LastEditors: miaoyu
  * @Description: 
  */ 
 import * as vector from "./vector";
+import Line from "./Line";
 
 class Ball {
   radius: number = 20;
@@ -35,6 +36,10 @@ class Ball {
    */
   m = 1;
   /**
+   * line
+   */
+  lines: Line[] = []
+  /**
    * 摩擦力
    */
   friction = 0.8;
@@ -46,7 +51,7 @@ class Ball {
   update() {
     /**
      * 计算加速度
-     * a = f/m
+      * a = f/m
      */
     vector.scale(this.a, this.f, 1/this.m)
     /**
@@ -54,6 +59,7 @@ class Ball {
      */
     this.speed = vector.add(this.speed, this.speed, this.a)
     this.speed = vector.scale(this.speed, this.speed, this.friction)
+    
     this.p = vector.add(this.p, this.p, this.speed)
   }
 

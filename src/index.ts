@@ -1,31 +1,48 @@
 /*
  * @Author: miaoyu
  * @Date: 2020-05-28 20:01:21
- * @LastEditTime: 2020-05-30 14:07:58
+ * @LastEditTime: 2020-05-30 16:48:15
  * @LastEditors: miaoyu
  * @Description:
  */
 
 import Ball from "./Ball";
-// import Line from "./Line";
+import Line from "./Line";
 import * as vector from "./vector";
 import * as utils from "./utils";
 import { createData } from "./data";
 
+const log = utils.log(1000);
 const canvas = document.getElementById("app") as HTMLCanvasElement;
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-const data = createData(canvas.width, canvas.height, 30);
+const data = createData(canvas.width, canvas.height, 30, 10);
 console.log(data);
 
 enum PARAMS {
-  coulomb = 3,
+  /**
+   * 中心力系数
+   */
   center = 0.000001,
-  centerDistance = 0,
+  /**
+   * 库仑力系数
+   */
+  coulomb = 10,
+  /**
+   * 阻尼力系数
+   */
   damping = 0.0001,
+  /**
+   * 弹力系数
+   */
+  hooke = 0.000001,
+  /**
+   * 弹簧长度
+   */
+  springlength = 50,
 }
 
 function render() {
@@ -33,6 +50,9 @@ function render() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   data.balls.forEach((ball) => {
     ball.render(ctx);
+    ball.lines.forEach((line) => {
+      line.render(ctx);
+    });
   });
   requestAnimationFrame(render);
 }
@@ -42,10 +62,30 @@ function update() {
       if (source.id === target.id) return;
       handleCoulombForce(source, target);
       handleCentrialForce(source);
+      source.lines.forEach((line) => {
+        handleHookeForce(line, source);
+      });
       handleDampingForce(source);
     });
   });
-  // handleCoulombForce()
+}
+/**
+ * 胡可定理
+ * hookeForce = k * delta
+ */
+function handleHookeForce(line: Line, source: Ball) {
+  const target = line.target === source ? line.source : line.target;
+  // ball = line.source
+  const currentLength = vector.distance(target.p, source.p);
+  const delta = currentLength - PARAMS.springlength;
+
+  const hookeForce = PARAMS.hooke * delta;
+
+  const direction = vector.sub(vector.create(), target.p, source.p);
+  vector.normalize(direction, direction);
+  // utils.log(direction)
+
+  vector.scaleAndAdd(source.f, source.f, direction, hookeForce);
 }
 
 /**
@@ -69,7 +109,6 @@ function handleCentrialForce(ball: Ball) {
   const k = PARAMS.center;
   const center = vector.create(canvas.width / 2, canvas.height / 2);
   let distance = vector.distance(ball.p, center);
-  distance = distance < PARAMS.centerDistance ? 0 : distance;
   const centrialForce = distance * k;
   const direction = vector.sub(vector.create(), ball.p, center);
   vector.normalize(direction, direction);
